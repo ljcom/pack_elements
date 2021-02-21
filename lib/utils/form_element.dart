@@ -5,8 +5,9 @@ import 'package:flutter_chips_input/flutter_chips_input.dart';
 import 'package:oph_elements/utils/camera_service.dart';
 import 'dart:io';
 import 'package:oph_elements/utils/imageFolder.dart';
-import 'package:oph_elements/utils/map_service.dart'
-    if (dart.library.html) 'package:oph_elements/utils/map_web_service.dart';
+import 'package:oph_elements/utils/map_service.dart';
+import 'package:oph_elements/utils/map_web_service.dart';
+//if (dart.library.html) 'package:oph_elements/utils/map_web_service.dart';
 import 'package:oph_core/models/oph.dart';
 import 'package:oph_core/models/preset.dart';
 import 'package:oph_core/utils/form_service.dart';
@@ -488,7 +489,7 @@ class FormEl {
                 List<String> ret = await Navigator.push(context,
                     MaterialPageRoute(builder: (context) {
                   if (kIsWeb)
-                    return MapxPage(f, 'Choose Location', _preset);
+                    return MapWebPage(f, 'Choose Location', _preset);
                   else
                     return MapxPage(f, 'Choose Location', _preset);
                 }));
