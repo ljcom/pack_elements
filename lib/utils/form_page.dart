@@ -51,7 +51,12 @@ class _FormPageState extends State<FormPage> {
       {@required String title, //@required String guid
       FormService frm}) async {
     await Navigator.push(context, MaterialPageRoute(builder: (context) {
-      return FormDetail(alias: widget.code, title: title, frm: frm, ratio: 1);
+      return FormDetail(
+          alias: widget.code,
+          title: title,
+          frm: frm,
+          ratio: 1,
+          preset: widget.preset);
     }));
     await _refresh();
     setState(() {});
@@ -70,6 +75,8 @@ class _FormPageState extends State<FormPage> {
 
     //await frm.loadForm();
     b = await frm.function(action: 'delete');
+    await _refresh();
+
     if (!b) _showSnackBar(frm.error());
     return b;
   }

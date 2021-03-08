@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:oph_core/utils/form_service.dart';
 import 'package:oph_elements/utils/form_element.dart';
 import 'package:oph_core/models/oph.dart';
-import 'package:oph_core/oph_core.dart';
+//import 'package:oph_core/oph_core.dart';
 import 'package:oph_core/models/preset.dart';
 
 class FormDetail extends StatefulWidget {
@@ -82,7 +82,7 @@ class _FormDetailState extends State<FormDetail> {
     return PreferredSize(
         preferredSize: Size.fromHeight(36.0),
         child: AppBar(
-          backgroundColor: Oph.curPreset.color2,
+          backgroundColor: widget.preset.color2,
           elevation: 0,
           title: Text(widget.title ?? '', style: TextStyle(fontSize: 16)),
         ));
@@ -92,19 +92,20 @@ class _FormDetailState extends State<FormDetail> {
     double scrw = MediaQuery.of(context).size.width;
     print(f[i].boxType);
     return f[i].boxType == 'textBox'
-        ? el.textBox(f[i], onChanged: () {
+        ? el.textBox(f[i], isEnabled: f[i].isEditable > 0, onChanged: () {
             if (widget.onChanged != null) widget.onChanged();
             setState(() {});
           })
         //, frm.fields[i].fieldName, frm.fields[i].caption, frm.fields[i].controller)
         : f[i].boxType == 'autosuggestBox'
             ? el.chooseBox(context, widget.alias, f[i], widget.frm,
-                onChanged: () {
+                isEnabled: f[i].isEditable > 0, onChanged: () {
                 if (widget.onChanged != null) widget.onChanged();
                 setState(() {});
               }) //frm.fields[i].fieldName, frm.fields[i].caption, frm.fields[i].controller)
             : f[i].boxType == 'checkBox'
-                ? el.switchBox(context, f[i], onChanged: () {
+                ? el.switchBox(context, f[i], isEnabled: f[i].isEditable > 0,
+                    onChanged: () {
                     if (widget.onChanged != null) widget.onChanged();
                     setState(() {});
                   }) //frm.fields[i].fieldName, frm.fields[i].caption, frm.fields[i].controller)
@@ -112,36 +113,25 @@ class _FormDetailState extends State<FormDetail> {
                 : f[i].boxType == 'profileBox'
                     ? el.profileBox(
                         context, f[i], scrw, scrw / widget.ratio ?? 1,
-                        onChanged: () {
+                        isEnabled: f[i].isEditable > 0, onChanged: () {
                         if (widget.onChanged != null) widget.onChanged();
                         setState(() {});
                       })
                     : f[i].boxType == 'setGPSBox'
-                        ? el.setGPSBox(context, f[i], onChanged: () {
+                        ? el.setGPSBox(context, f[i], 
+                        isEnabled: f[i].isEditable > 0, 
+                        onChanged: () {
+                            if (widget.onChanged != null) widget.onChanged();
+                            setState(() {});
+                          })
+                    : f[i].boxType == 'passwordBox'
+                        ? el.passwordBox( f[i], 
+                        isEnabled: f[i].isEditable > 0, 
+                        onSubmitted: () {
                             if (widget.onChanged != null) widget.onChanged();
                             setState(() {});
                           })
                         : Container();
-/*
-                    : TextFormField(
-                        initialValue: f[i].value,
-                        decoration: new InputDecoration(
-                            helperText: f[i].caption,
-                            hintText: f[i].fieldName,
-                            hintStyle: new TextStyle(color: Colors.grey)),
-                      );
-
-    TextField(
-      controller: f[i].controller,
-      obscureText: f[i].boxType == 'PASSWORD',
-      style: TextStyle(fontSize: h / 24 / 1.5),
-      autocorrect: false,
-      decoration: new InputDecoration(
-          labelText: f[i].caption,
-          hintText: f[i].caption,
-          hintStyle: new TextStyle(color: Colors.grey)),
-    );
-*/
   }
 
   Widget listWidget(List<FrmField> fld) {
@@ -179,7 +169,7 @@ class _FormDetailState extends State<FormDetail> {
                                     'Cancel',
                                     style: TextStyle(
                                         fontSize: h / 16 / 2,
-                                        color: Oph.curPreset.color4),
+                                        color: widget.preset.color4),
                                   ),
                                   onPressed: () {
                                     Navigator.pop(context, true);
@@ -188,7 +178,7 @@ class _FormDetailState extends State<FormDetail> {
                                 TextButton(
                                   //color: g.color1,
                                   style: TextButton.styleFrom(
-                                      backgroundColor: Oph.curPreset.color1),
+                                      backgroundColor: widget.preset.color1),
                                   child: Text(
                                     'Save',
                                     style: TextStyle(

@@ -5,8 +5,9 @@ import 'package:flutter_chips_input/flutter_chips_input.dart';
 import 'package:oph_elements/utils/camera_service.dart';
 import 'dart:io';
 import 'package:oph_elements/utils/imageFolder.dart';
-import 'package:oph_elements/utils/map_service.dart';
-import 'package:oph_elements/utils/map_web_service.dart';
+import 'package:oph_elements/utils/map_service.dart'
+    if (dart.library.io) 'package:oph_elements/utils/map_service.dart'
+    if (dart.library.html) 'package:oph_elements/utils/map_web_service.dart';
 //if (dart.library.html) 'package:oph_elements/utils/map_web_service.dart';
 import 'package:oph_core/models/oph.dart';
 import 'package:oph_core/models/preset.dart';
@@ -34,12 +35,14 @@ class FormEl {
   Widget textBox(FrmField f,
       {VoidCallback onChanged,
       bool isExpandable = false,
+      bool isEnabled = true,
       Widget
           suffixIcon}) //, String fieldName, String titleName, TextEditingController controller) {
   {
     return Padding(
       padding: EdgeInsets.only(left: 0, right: 0),
       child: TextField(
+        enabled: isEnabled,
         //initialValue: value,
         controller: f.controller,
         minLines: null,
@@ -150,7 +153,8 @@ class FormEl {
   }
 */
   Widget profileBox(BuildContext context, FrmField f, double scrw, double scrh,
-      {VoidCallback
+      {bool isEnabled = true,
+      VoidCallback
           onChanged}) //, String fieldName, String titleName, TextEditingController controller) {
   {
     Image curImg;
@@ -187,22 +191,25 @@ class FormEl {
         padding: EdgeInsets.all(0),
         child: Column(children: [
           AspectRatio(aspectRatio: scrw / scrh, child: curImg),
-          Row(children: [
-            TextButton(
-              style: TextButton.styleFrom(
-                primary: _preset.color1,
-              ),
-              child: Text('Take a photo'),
-              onPressed: () async {
-                //camera
-                String fp = await getImage(
-                    context, //ImgSource.Camera,
-                    onChanged);
-                f.imageName = fp;
-                f.imageFile = File(fp);
-                //= File(imageFile.path);
+          Row(
+              children: !isEnabled
+                  ? []
+                  : [
+                      TextButton(
+                        style: TextButton.styleFrom(
+                          primary: _preset.color1,
+                        ),
+                        child: Text('Take a photo'),
+                        onPressed: () async {
+                          //camera
+                          String fp = await getImage(
+                              context, //ImgSource.Camera,
+                              onChanged);
+                          f.imageName = fp;
+                          f.imageFile = File(fp);
+                          //= File(imageFile.path);
 
-                /*
+                          /*
                  //image_picker
                 String fp = await _onImageButtonPressed(ImageSource.camera,
                     context: context, onChange: () {
@@ -211,21 +218,21 @@ class FormEl {
                 f.imageName = fp;
                 f.imageFile = File(fp);
                 */
-              },
-            ),
-            TextButton(
-              style: TextButton.styleFrom(
-                primary: _preset.color1,
-              ),
-              child: Text('Get from Gallery'),
-              onPressed: () async {
-                String fp = await getImageFile(
-                    context, //ImgSource.Gallery,
-                    onChanged);
-                f.imageName = fp;
-                if (fp != null) f.imageFile = File(fp);
+                        },
+                      ),
+                      TextButton(
+                        style: TextButton.styleFrom(
+                          primary: _preset.color1,
+                        ),
+                        child: Text('Get from Gallery'),
+                        onPressed: () async {
+                          String fp = await getImageFile(
+                              context, //ImgSource.Gallery,
+                              onChanged);
+                          f.imageName = fp;
+                          if (fp != null) f.imageFile = File(fp);
 
-                /*
+                          /*
                 //image_picker
                 String fp = await _onImageButtonPressed(ImageSource.gallery,
                     context: context, onChange: () {
@@ -235,14 +242,15 @@ class FormEl {
                 f.imageName = fp;
                 f.imageFile = File(fp);
                 */
-              },
-            )
-          ]),
+                        },
+                      )
+                    ]),
         ]));
   }
 
   Widget switchBox(BuildContext context, FrmField f,
-      {VoidCallback
+      {bool isEnabled: true,
+      VoidCallback
           onChanged}) //String fieldName, String titleName, TextEditingController controller) {
   {
     bool val = f.controller?.text == '1';
@@ -254,8 +262,10 @@ class FormEl {
               activeColor: _preset.color1,
               value: val,
               onChanged: (i) {
-                f.controller?.text = i ? '1' : '0';
-                _callback();
+                if (isEnabled) {
+                  f.controller?.text = i ? '1' : '0';
+                  _callback();
+                }
               },
             ),
             Text(f.caption),
@@ -265,22 +275,15 @@ class FormEl {
 
   Widget chooseBox(
       BuildContext context, String code, FrmField f, FormService appForm,
-      {VoidCallback
+      {bool isEnabled = true,
+      VoidCallback
           onChanged}) //String fieldName, String titleName, TextEditingController controller)
   {
     if (f.value != '') {
       String combovalue = appForm.view(f.combovalue);
-      //String wf1val = appForm.view(f.autosuggestBoxPar.wf1);
-      //String wf2val = appForm.view(f.autosuggestBoxPar.wf2);
-
-      //appForm
-      //  .autosuggest(f.fieldName, dv: f.value, wf1: wf1val, wf2: wf2val)
-      //  .then((dv) {
-      //print(dv);
-      if (f.controller.text == '' || f.controller.text == null)
+      if (f.controller.text == '' || f.controller.text == null) {
         f.controller.text = combovalue;
-      //f.controller.text = dv[0]['text'];
-      //});
+      }
     }
     return Padding(
         padding: EdgeInsets.only(left: 0, right: 0),
@@ -291,11 +294,16 @@ class FormEl {
                 hintText: f.caption,
                 labelText: f.caption,
                 fillColor: _preset.color2,
-                //border: OutlineInputBorder()
+                //suffixIcon: IconButton(
+                //onPressed: f.controller.clear,
+                //icon: Icon(Icons.clear),
+                //),
               )),
           suggestionsCallback: (pattern) async {
-            String wf1val = appForm.view(f.autosuggestBoxPar.wf1);
-            String wf2val = appForm.view(f.autosuggestBoxPar.wf2);
+            String wf1val = appForm.view(f.autosuggestBoxPar.wf1, mode: 1);
+            if (f.autosuggestBoxPar.wf1 == 'cid') wf1val = appForm.formGUID();
+            String wf2val = appForm.view(f.autosuggestBoxPar.wf2, mode: 1);
+            if (f.autosuggestBoxPar.wf2 == 'cid') wf2val = appForm.formGUID();
             var r = await appForm.autosuggest(f.fieldName,
                 q: pattern, wf1: wf1val, wf2: wf2val);
             return r;
@@ -308,6 +316,7 @@ class FormEl {
           onSuggestionSelected: (Map suggestion) {
             f.controller.text = suggestion['text'];
             f.value = suggestion['id'];
+            f.combovalue = suggestion['text'];
             if (onChanged != null) onChanged();
             _callback();
           },
@@ -315,11 +324,12 @@ class FormEl {
   }
 
   Widget passwordBox(FrmField f,
-      {VoidCallback
+      {bool isEnabled = true,
+      VoidCallback
           onSubmitted}) //, String fieldName, String titleName, TextEditingController controller) {
   {
     return Padding(
-        padding: EdgeInsets.only(left: 10, right: 0),
+        padding: EdgeInsets.only(left: 0, right: 0),
         child: TextField(
           //initialValue: value,
           obscureText: true,
@@ -334,12 +344,17 @@ class FormEl {
         ));
   }
 
-  Widget tokenBox(String code, FrmField f, FormService appForm) {
+  Widget tokenBox(
+    String code,
+    FrmField f,
+    FormService appForm, {
+    bool isEnabled = true,
+  }) {
     List<Map<String, dynamic>> d = [];
     if (f.value != '')
       f.value.split('*').forEach((x) {
-        String wf1val = appForm.view(f.autosuggestBoxPar.wf1);
-        String wf2val = appForm.view(f.autosuggestBoxPar.wf2);
+        String wf1val = appForm.view(f.autosuggestBoxPar.wf1, mode: 1);
+        String wf2val = appForm.view(f.autosuggestBoxPar.wf2, mode: 1);
 
         appForm
             .autosuggest(f.fieldName, dv: x, wf1: wf1val, wf2: wf2val)
@@ -356,8 +371,8 @@ class FormEl {
       ),
       maxChips: 3,
       findSuggestions: (String query) async {
-        String wf1val = appForm.view(f.autosuggestBoxPar.wf1);
-        String wf2val = appForm.view(f.autosuggestBoxPar.wf2);
+        String wf1val = appForm.view(f.autosuggestBoxPar.wf1, mode: 1);
+        String wf2val = appForm.view(f.autosuggestBoxPar.wf2, mode: 1);
 
         var r = await appForm.autosuggest(f.fieldName,
             q: query, wf1: wf1val, wf2: wf2val);
@@ -471,7 +486,8 @@ class FormEl {
                 children: w)));
   }
 
-  Widget setGPSBox(BuildContext context, FrmField f, {Function onChanged}) {
+  Widget setGPSBox(BuildContext context, FrmField f,
+      {bool isEnabled = true, Function onChanged}) {
     return Container(
         width: MediaQuery.of(context).size.width,
         padding: EdgeInsets.all(0),
@@ -488,10 +504,10 @@ class FormEl {
               onPressed: () async {
                 List<String> ret = await Navigator.push(context,
                     MaterialPageRoute(builder: (context) {
-                  if (kIsWeb)
-                    return MapWebPage(f, 'Choose Location', _preset);
-                  else
-                    return MapxPage(f, 'Choose Location', _preset);
+                  //if (kIsWeb)
+                  return MapxPage(f, 'Choose Location', _preset);
+                  //else
+                  //return MapxPage(f, 'Choose Location', _preset);
                 }));
                 if (ret != null && ret.length > 0) {
                   f.controller.text = ret[1];

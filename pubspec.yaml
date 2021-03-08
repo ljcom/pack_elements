@@ -1,13 +1,13 @@
 name: oph_elements
 description: Widget elements for OPH 
-version: 0.0.1+4
+version: 0.0.1+18
 #author:
 homepage: https://github.com/ljcom/pack_elements
 #publish_to: none
 
 environment:
   sdk: ">=2.7.0 <3.0.0"
-  flutter: ">=1.17.0"
+  flutter: ">=1.20.0"
 
 dependencies:
   flutter:
@@ -27,7 +27,7 @@ dependencies:
   image: ^2.1.4
   #image_picker: ^0.6.5
 
-  oph_core: ^0.0.1
+  oph_core: ^0.0.1+12
 
 dev_dependencies:
   flutter_test:

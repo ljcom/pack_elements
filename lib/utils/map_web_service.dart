@@ -12,8 +12,8 @@ import 'package:geocoder/geocoder.dart' as coder;
 import 'dart:ui' as ui;
 import 'package:oph_core/models/preset.dart';
 
-class MapWebPage extends StatefulWidget {
-  MapWebPage(
+class MapxPage extends StatefulWidget {
+  MapxPage(
       this.f, //this.addressField,
       this.title,
       this.preset);
@@ -28,7 +28,7 @@ class MapWebPage extends StatefulWidget {
   _MapPageState createState() => _MapPageState();
 }
 
-class _MapPageState extends State<MapWebPage> {
+class _MapPageState extends State<MapxPage> {
   LocationData curLoc;
   LocationData newLoc;
   Marker centerMarker = Marker();
