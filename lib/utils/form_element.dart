@@ -48,8 +48,9 @@ class FormEl {
         minLines: null,
         maxLines: null,
         decoration: InputDecoration(
-            hintText: f.caption != '' ? f.caption : f.fieldName,
-            labelText: f.caption != '' ? f.caption : f.fieldName,
+            hintText: (f.caption != '' ? f.caption : f.fieldName),
+            labelText: (f.caption != '' ? f.caption : f.fieldName) +
+                (f.isNullable ? '' : '*'),
             fillColor: _preset.color2,
             suffixIcon: suffixIcon
             //focusedBorder: OutlineInputBorder(),
@@ -279,25 +280,26 @@ class FormEl {
       VoidCallback
           onChanged}) //String fieldName, String titleName, TextEditingController controller)
   {
-    if (f.value != '') {
-      String combovalue = appForm.view(f.combovalue);
-      if (f.controller.text == '' || f.controller.text == null) {
-        f.controller.text = combovalue;
-      }
-    }
+    //if (f.value != '') {
+    String combovalue = f.combovalue;
+    //if (f.controller.text == '' || f.controller.text == null) {
+    f.controller.text = combovalue;
+    //}
+    //}
     return Padding(
         padding: EdgeInsets.only(left: 0, right: 0),
         child: TypeAheadField(
           textFieldConfiguration: TextFieldConfiguration(
               controller: f.controller,
               decoration: InputDecoration(
-                hintText: f.caption,
-                labelText: f.caption,
+                hintText: (f.caption != '' ? f.caption : f.fieldName),
+                labelText: (f.caption != '' ? f.caption : f.fieldName) +
+                    (f.isNullable ? '' : '*'),
                 fillColor: _preset.color2,
-                //suffixIcon: IconButton(
-                //onPressed: f.controller.clear,
-                //icon: Icon(Icons.clear),
-                //),
+                suffixIcon: IconButton(
+                  onPressed: f.controller.clear,
+                  icon: Icon(Icons.clear),
+                ),
               )),
           suggestionsCallback: (pattern) async {
             String wf1val = appForm.view(f.autosuggestBoxPar.wf1, mode: 1);
@@ -336,8 +338,9 @@ class FormEl {
           obscuringCharacter: '*',
           controller: f.controller,
           decoration: InputDecoration(
-            hintText: f.caption != '' ? f.caption : f.fieldName,
-            labelText: f.caption != '' ? f.caption : f.fieldName,
+            hintText: (f.caption != '' ? f.caption : f.fieldName),
+            labelText: (f.caption != '' ? f.caption : f.fieldName) +
+                (f.isNullable ? '' : '*'),
             fillColor: _preset.color2,
             //focusedBorder: OutlineInputBorder(),
           ),

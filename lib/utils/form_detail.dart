@@ -65,7 +65,15 @@ class _FormDetailState extends State<FormDetail> {
   }
 
   Future<bool> saveForm() async {
-    return await widget.frm.save();
+    bool b = true;
+    widget.frm.curForm().fields.forEach((f) {
+      if (!f.isNullable && f.controller.value.text == '') b = false;
+    });
+    if (b)
+      b = await widget.frm.save(parentguid: widget.parentguid);
+    else
+      _showSnackBar('You have to complete all mandatory fields.');
+    return b;
   }
 
   Future<bool> delForm() async {
@@ -73,9 +81,11 @@ class _FormDetailState extends State<FormDetail> {
   }
 
   _showSnackBar(String message, {int duration = 3}) {
-    final snackBar = new SnackBar(
-        duration: Duration(seconds: duration), content: new Text(message));
-    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    if (message != '') {
+      final snackBar = new SnackBar(
+          duration: Duration(seconds: duration), content: new Text(message));
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    }
   }
 
   PreferredSizeWidget appBarWidget() {
@@ -118,20 +128,19 @@ class _FormDetailState extends State<FormDetail> {
                         setState(() {});
                       })
                     : f[i].boxType == 'setGPSBox'
-                        ? el.setGPSBox(context, f[i], 
-                        isEnabled: f[i].isEditable > 0, 
-                        onChanged: () {
+                        ? el.setGPSBox(context, f[i],
+                            isEnabled: f[i].isEditable > 0, onChanged: () {
                             if (widget.onChanged != null) widget.onChanged();
                             setState(() {});
                           })
-                    : f[i].boxType == 'passwordBox'
-                        ? el.passwordBox( f[i], 
-                        isEnabled: f[i].isEditable > 0, 
-                        onSubmitted: () {
-                            if (widget.onChanged != null) widget.onChanged();
-                            setState(() {});
-                          })
-                        : Container();
+                        : f[i].boxType == 'passwordBox'
+                            ? el.passwordBox(f[i],
+                                isEnabled: f[i].isEditable > 0, onSubmitted: () {
+                                if (widget.onChanged != null)
+                                  widget.onChanged();
+                                setState(() {});
+                              })
+                            : Container();
   }
 
   Widget listWidget(List<FrmField> fld) {

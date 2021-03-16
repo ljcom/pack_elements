@@ -18,7 +18,9 @@ class FormPage extends StatefulWidget {
       @required this.msgKey,
       @required this.fn,
       this.refreshNumber,
-      this.preset})
+      @required this.preset,
+      this parentguid,
+      this.bottomWidget})
       : super(key: key);
 
   final String title;
@@ -29,7 +31,8 @@ class FormPage extends StatefulWidget {
   final int refreshNumber;
   final GlobalKey<ScaffoldMessengerState> msgKey;
   final Preset preset;
-
+  final Widget bottomWidget;
+  final String parentguid;
   @override
   _FormPageState createState() => _FormPageState();
 }
@@ -56,6 +59,7 @@ class _FormPageState extends State<FormPage> {
           title: title,
           frm: frm,
           ratio: 1,
+          parentguid: widget.parentguid,
           preset: widget.preset);
     }));
     await _refresh();
@@ -175,6 +179,7 @@ class _FormPageState extends State<FormPage> {
     return Scaffold(
         appBar: appBarWidget(),
         body: RefreshIndicator(onRefresh: _refresh, child: bodyWidget()),
-        floatingActionButton: addItem());
+        floatingActionButton: addItem(),
+        bottomSheet: widget.bottomWidget);
   }
 }
