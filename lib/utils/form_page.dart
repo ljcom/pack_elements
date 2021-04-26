@@ -110,13 +110,7 @@ class _FormPageState extends State<FormPage> {
             primary: false,
             shrinkWrap: true,
             itemBuilder: (context, i) {
-              String itemName = items[i]
-                      .value
-                      .fields
-                      .where((e) => e.caption == widget.caption)
-                      .toList()[0]
-                      .val ??
-                  '';
+              String itemName = items[i].value.fields[widget.caption].val ?? '';
               return InkWell(
                 child: ListTile(
                     title: Text(itemName,
@@ -141,13 +135,8 @@ class _FormPageState extends State<FormPage> {
                       },
                     )),
                 onTap: () {
-                  String itemName = items[i]
-                          .value
-                          .fields
-                          .where((e) => e.caption == widget.caption)
-                          .toList()[0]
-                          .val ??
-                      '';
+                  String itemName =
+                      items[i].value.fields[widget.caption].val ?? '';
                   goFormDetail(title: itemName, frm: items[i].value.frmSvc);
                 },
               );
