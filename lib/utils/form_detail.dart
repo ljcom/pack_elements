@@ -113,8 +113,21 @@ class _FormDetailState extends State<FormDetail> {
                 if (widget.onChanged != null) widget.onChanged();
                 setState(() {});
               }) //frm.fields[i].fieldName, frm.fields[i].caption, frm.fields[i].controller)
+            : f[i].boxType == 'dateBox'
+                ? el.dateBox(f[i], isEnabled: f[i].isEditable > 0,
+                    onChanged: () {
+                    if (widget.onChanged != null) widget.onChanged();
+                    setState(() {});
+                  }) //frm.fields[i].fieldName, frm.fields[i].caption, frm.fields[i].controller)
+
             : f[i].boxType == 'checkBox'
                 ? el.switchBox(context, f[i], isEnabled: f[i].isEditable > 0,
+                    onChanged: () {
+                    if (widget.onChanged != null) widget.onChanged();
+                    setState(() {});
+                  }) //frm.fields[i].fieldName, frm.fields[i].caption, frm.fields[i].controller)
+              : f[i].boxType == 'radioBox'
+                ? el.radioButton(f[i], isEnabled: f[i].isEditable > 0,
                     onChanged: () {
                     if (widget.onChanged != null) widget.onChanged();
                     setState(() {});

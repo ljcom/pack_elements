@@ -4,4 +4,5 @@
 [0.0.1+12] google map conditional
 [0.0.1+13] fix preset color
 [0.0.1+14] refresh after delete in browse
-[0.0.1+18] fix choosebox
+[0.0.1+19] fix choosebox, add cid
+[0.0.1+20] update pubspec

@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:flutter_chips_input/flutter_chips_input.dart';
+import 'package:intl/intl.dart';
 import 'package:oph_elements/utils/camera_service.dart';
 import 'dart:io';
 import 'package:oph_elements/utils/imageFolder.dart';
@@ -12,6 +13,7 @@ import 'package:oph_elements/utils/map_service.dart'
 import 'package:oph_core/models/oph.dart';
 import 'package:oph_core/models/preset.dart';
 import 'package:oph_core/utils/form_service.dart';
+import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 
 class FormEl {
   VoidCallback _callback;
@@ -48,8 +50,12 @@ class FormEl {
         minLines: null,
         maxLines: null,
         decoration: InputDecoration(
-            hintText: (f.caption != '' ? f.caption : f.fieldName),
-            labelText: (f.caption != '' ? f.caption : f.fieldName) +
+            hintText: (f.caption != '' && f.caption != null
+                ? f.caption
+                : f.fieldName),
+            labelText: (f.caption != '' && f.caption != null
+                    ? f.caption
+                    : f.fieldName) +
                 (f.isNullable ? '' : '*'),
             fillColor: _preset.color2,
             suffixIcon: suffixIcon
@@ -521,6 +527,66 @@ class FormEl {
                 //return ret;
               })
         ]));
+  }
+
+  Widget dateBox(FrmField f,
+      {VoidCallback onChanged, bool isEnabled = true} //fieldid, defaultValue
+      ) {
+    return Padding(
+      padding: EdgeInsets.all(10.0),
+      child: DateTimeField(
+        format: DateFormat("yyyy-MM-dd HH:mm"),
+        onShowPicker: (context, defaultValue) async {
+          final date = await showDatePicker(
+              context: context,
+              firstDate: DateTime(2000),
+              initialDate: defaultValue ?? DateTime.now(),
+              lastDate: DateTime(2100));
+          if (date != null) {
+            final time = await showTimePicker(
+              context: context,
+              initialTime:
+                  TimeOfDay.fromDateTime(defaultValue ?? DateTime.now()),
+            );
+            return DateTimeField.combine(date, time);
+          } else {
+            return defaultValue;
+          }
+        },
+        decoration: InputDecoration(
+            labelText: (f.caption != '' && f.caption != null
+                    ? f.caption
+                    : f.fieldName) +
+                (f.isNullable ? '' : '*'),
+            //labelStyle: textStyle(fontSize: 20.0),
+            border:
+                OutlineInputBorder(borderRadius: BorderRadius.circular(5.0))),
+      ),
+    );
+  }
+
+  Widget radioButton(FrmField f,
+      {List<String> choice,
+      VoidCallback onChanged,
+      bool isEnabled = true,
+      String defaultValue}) {
+    return Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: List.generate(choice.length, (i) {
+          return Row(children: [
+            Radio(
+              value: i,
+              groupValue: defaultValue,
+              onChanged: (i) {
+                print(i);
+              },
+            ),
+            Text(
+              choice[i],
+              style: new TextStyle(fontSize: 16.0),
+            )
+          ]);
+        }));
   }
 
   Future<void> inputDialog(

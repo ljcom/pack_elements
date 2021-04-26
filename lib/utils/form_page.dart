@@ -19,7 +19,7 @@ class FormPage extends StatefulWidget {
       @required this.fn,
       this.refreshNumber,
       @required this.preset,
-      this parentguid,
+      this.parentguid,
       this.bottomWidget})
       : super(key: key);
 
@@ -102,7 +102,8 @@ class _FormPageState extends State<FormPage> {
   }
 
   Widget bodyWidget() {
-    List<BrowseRow> items = widget.frmList.rows;
+    List<MapEntry<String, BrowseRow>> items =
+        widget.frmList.rows.entries.toList();
     return items.length == 0
         ? Center(child: Text('No Data Available.'))
         : ListView.builder(
@@ -110,6 +111,7 @@ class _FormPageState extends State<FormPage> {
             shrinkWrap: true,
             itemBuilder: (context, i) {
               String itemName = items[i]
+                      .value
                       .fields
                       .where((e) => e.caption == widget.caption)
                       .toList()[0]
@@ -129,7 +131,7 @@ class _FormPageState extends State<FormPage> {
                       child: Text('Delete',
                           style: TextStyle(color: Oph.curPreset.color4)),
                       onPressed: () async {
-                        bool r = await delItem(items[i].guid);
+                        bool r = await delItem(items[i].key);
                         if (r)
                           setState(() async {
                             widget.fn(i: widget.refreshNumber);
@@ -140,12 +142,13 @@ class _FormPageState extends State<FormPage> {
                     )),
                 onTap: () {
                   String itemName = items[i]
+                          .value
                           .fields
                           .where((e) => e.caption == widget.caption)
                           .toList()[0]
                           .val ??
                       '';
-                  goFormDetail(title: itemName, frm: items[i].frmSvc);
+                  goFormDetail(title: itemName, frm: items[i].value.frmSvc);
                 },
               );
             },
