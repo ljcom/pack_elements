@@ -27,7 +27,7 @@ dependencies:
   image: ^3.0.2
   #image_picker: ^0.6.5
   datetime_picker_formfield: ^2.0.0
-  oph_core: ^0.0.1+27
+  oph_core: ^0.0.1+29
 
 dev_dependencies:
   flutter_test:
