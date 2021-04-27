@@ -344,7 +344,7 @@ packages:
       name: oph_core
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.0.1+27"
+    version: "0.0.1+30"
   path:
     dependency: transitive
     description:
